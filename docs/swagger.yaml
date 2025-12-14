@@ -1,0 +1,104 @@
+basePath: /
+definitions:
+  entity.ErrorResponse:
+    properties:
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+  entity.LoginRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  entity.LoginSuccessResponse:
+    properties:
+      status:
+        type: string
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/entity.UserPublicDTO'
+    type: object
+  entity.RegisterResponse:
+    properties:
+      status:
+        type: string
+      user:
+        $ref: '#/definitions/entity.UserPublicDTO'
+    type: object
+  entity.RegisterUser:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  entity.UserPublicDTO:
+    properties:
+      id:
+        type: integer
+      login:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для проверки регистрации и входа
+  title: Startup_PrivateCabin API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизация с проверкой логина и пароля
+      parameters:
+      - description: Login / Password
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/entity.LoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.LoginSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      summary: GetUser user
+      tags:
+      - Авторизация
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя с логином и паролем
+      parameters:
+      - description: Login / Password
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/entity.RegisterUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      summary: CreateUser user
+      tags:
+      - Регистрация
+swagger: "2.0"
