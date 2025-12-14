@@ -35,7 +35,7 @@ func main() {
 	_ = godotenv.Load()
 	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
-		//connStr = "postgres://user:pass@localhost:5433/mydb?sslmode=disable"
+		connStr = "postgres://user:pass@localhost:5432/mydb?sslmode=disable"
 		log.Fatal("DB URL NOT SET")
 	}
 	port := os.Getenv("PORT")
@@ -54,6 +54,8 @@ func main() {
 	}
 
 	log.Println("Подключено к базе")
+
+	createUsersTable(db)
 
 	//CREATE ADAPTERP
 	repo := repository.NewUserRepository(db)
@@ -113,4 +115,21 @@ func main() {
 		log.Printf("Shutdown error: %v\n", err)
 	}
 	log.Println("Graceful shutdown complete")
+}
+
+func createUsersTable(db *sql.DB) {
+	query := `
+	CREATE TABLE IF NOT EXISTS users (
+		id SERIAL PRIMARY KEY,
+		login TEXT NOT NULL UNIQUE,
+		password TEXT NOT NULL
+	);
+	`
+
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatal("Ошибка создания таблицы users:", err)
+	}
+
+	log.Println("Таблица users создана или уже существует")
 }
