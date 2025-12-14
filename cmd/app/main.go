@@ -30,12 +30,17 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
+
 	//OPEN BD
 	_ = godotenv.Load()
 	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
 		//connStr = "postgres://user:pass@localhost:5433/mydb?sslmode=disable"
 		log.Fatal("DB URL NOT SET")
+	}
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("PORT IS NOT SET")
 	}
 	db, err := sql.Open("postgres", connStr)
 
@@ -64,7 +69,7 @@ func main() {
 
 	//CORS
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8080", "http://127.0.0.1:8080"},
+		AllowedOrigins:   []string{"http://localhost:" + port, "http://127.0.0.1:" + port},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		AllowCredentials: true,
@@ -86,12 +91,12 @@ func main() {
 
 	// Запуск сервера в горутине
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    port,
 		Handler: r,
 	}
 
 	go func() {
-		log.Println("server started on localhost:8080")
+		log.Println("server started on localhost:" + port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Server error: %v", err)
 		}
