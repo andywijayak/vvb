@@ -27,7 +27,6 @@ import (
 // @version 1.0
 // @description API для проверки регистрации и входа
 
-// @host localhost:8080
 // @BasePath /
 func main() {
 
@@ -71,9 +70,14 @@ func main() {
 
 	//CORS
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:" + port, "http://127.0.0.1:" + port},
+		AllowedOrigins: []string{
+			"http://localhost:3000",    // локальный фронт
+			"http://localhost:5173",    // Vite (если используешь)
+			"https://wvb.onrender.com", // swagger
+			"https://*.vercel.app",     // прод фронт
+		},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true,
 		MaxAge:           300,
 	}))
